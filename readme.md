@@ -126,7 +126,7 @@ Para acceder a la documentación desde un navegador puede ingresar a la url: `ht
 
 ## Pruebas con Postman
 
-Puedes utilizar Postman para probar los endpoints de la API. Una colección de Postman está disponible [aquí](#) (reemplaza con el enlace real).
+Puedes utilizar Postman para probar los endpoints de la API. Una colección de Postman está disponible [aquí](#)
 
 ## Contacto
 
