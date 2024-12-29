@@ -1,10 +1,34 @@
-const { Order } = require("./src/models/order");
-const { OrderItems } = require("./src/models/order-item");
+const { Order } = require("../models/order");
+const { OrderItems } = require("../models/order-item");
 
 const express = require("express");
 const router = express.Router();
 
-//Get All
+/**
+ * @swagger
+ * /api/v1/orders:
+ *   get:
+ *     summary: "Get all orders"
+ *     description: "Returns a list of all orders"
+ *     responses:
+ *       200:
+ *         description: "A list of orders"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                   totalPrice:
+ *                     type: number
+ *                   dateOrdered:
+ *                     type: string
+ */
 router.get(`/`, async (req, res) => {
   const orderList = await Order.find()
     .populate("user", "name")
@@ -16,7 +40,38 @@ router.get(`/`, async (req, res) => {
   res.send(orderList);
 });
 
-//Get by id
+/**
+ * @swagger
+ * /api/v1/orders/{id}:
+ *   get:
+ *     summary: "Get order by ID"
+ *     description: "Returns a single order based on the given ID"
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: "The order ID"
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: "The order"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 totalPrice:
+ *                   type: number
+ *                 dateOrdered:
+ *                   type: string
+ *       500:
+ *         description: "Order not found"
+ */
 router.get(`/:id`, async (req, res) => {
   const order = await Order.findById(req.params.id)
     .populate("user", "name")
@@ -31,7 +86,65 @@ router.get(`/:id`, async (req, res) => {
   res.send(order);
 });
 
-// Add
+/**
+ * @swagger
+ * /api/v1/orders:
+ *   post:
+ *     summary: "Create a new order"
+ *     description: "Creates a new order with the provided order items and details"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               orderItems:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     product:
+ *                       type: string
+ *                     quantity:
+ *                       type: number
+ *               shippingAddress1:
+ *                 type: string
+ *               shippingAddress2:
+ *                 type: string
+ *               city:
+ *                 type: string
+ *               zip:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *               user:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: "Order created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 totalPrice:
+ *                   type: number
+ *                 dateOrdered:
+ *                   type: string
+ *       400:
+ *         description: "Failed to create order"
+ *       500:
+ *         description: "Internal server error"
+ */
 router.post("/", async (req, res) => {
   try {
     const orderItemIdsResolved = await Promise.all(
@@ -44,10 +157,6 @@ router.post("/", async (req, res) => {
         return newOrderItem._id;
       })
     );
-
-    console.log(`El valor es orderItems es ${req.body.orderItems}`);
-
-    //  const orderItemIdsResolvedResolved = await orderItemIdsResolved
 
     if (orderItemIdsResolved.length === 0) {
       return res.status(400).send("No order items provided!");
@@ -75,8 +184,6 @@ router.post("/", async (req, res) => {
 
     const totalPrice = totalPrices.reduce((a, b) => a + b, 0);
 
-    console.log(totalPrices);
-
     let order = new Order({
       orderItems: orderItemIdsResolved,
       shippingAddress1: req.body.shippingAddress1,
@@ -103,7 +210,34 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update Order
+/**
+ * @swagger
+ * /api/v1/orders/{id}:
+ *   put:
+ *     summary: "Update order status"
+ *     description: "Updates the status of an existing order"
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: "The order ID"
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: "Order updated successfully"
+ *       400:
+ *         description: "Failed to update order"
+ */
 router.put("/:id", async (req, res) => {
   const order = await Order.findByIdAndUpdate(
     req.params.id,
@@ -117,7 +251,25 @@ router.put("/:id", async (req, res) => {
   res.send(order);
 });
 
-// Delete orders
+/**
+ * @swagger
+ * /api/v1/orders/{id}:
+ *   delete:
+ *     summary: "Delete an order"
+ *     description: "Deletes an order and its associated order items"
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: "The order ID"
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: "Order deleted successfully"
+ *       404:
+ *         description: "Order not found"
+ */
 router.delete("/:id", (req, res) => {
   Order.findByIdAndRemove(req.params.id)
     .then(async (order) => {
@@ -130,12 +282,12 @@ router.delete("/:id", (req, res) => {
 
         return res.status(200).json({
           success: true,
-          message: "The order is delete",
+          message: "The order has been deleted",
         });
       } else {
         return res.status(404).json({
           success: false,
-          message: "Order not found!!!",
+          message: "Order not found!",
         });
       }
     })
@@ -147,7 +299,25 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-//GET TotalSales
+/**
+ * @swagger
+ * /api/v1/orders/get/totalsales:
+ *   get:
+ *     summary: "Get total sales"
+ *     description: "Returns the total sales amount for all orders"
+ *     responses:
+ *       200:
+ *         description: "Total sales amount"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalSales:
+ *                   type: number
+ *       400:
+ *         description: "Unable to calculate total sales"
+ */
 router.get("/get/totalsales", async (req, res) => {
   const totalSales = await Order.aggregate([
     { $group: { _id: null, totalSales: { $sum: "$totalPrice" } } },
@@ -160,7 +330,25 @@ router.get("/get/totalsales", async (req, res) => {
   });
 });
 
-//Get count
+/**
+ * @swagger
+ * /api/v1/orders/get/count:
+ *   get:
+ *     summary: "Get total order count"
+ *     description: "Returns the total number of orders"
+ *     responses:
+ *       200:
+ *         description: "Total number of orders"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 orderCount:
+ *                   type: number
+ *       500:
+ *         description: "Failed to count orders"
+ */
 router.get(`/get/count`, async (req, res) => {
   const orderCount = await Order.countDocuments({});
   if (!orderCount) {
@@ -171,7 +359,31 @@ router.get(`/get/count`, async (req, res) => {
   res.send({ orderCount: orderCount });
 });
 
-//Get users orders
+/**
+ * @swagger
+ * /api/v1/orders/get/usersorders/{userid}:
+ *   get:
+ *     summary: "Get orders by user"
+ *     description: "Returns a list of orders placed by a specific user"
+ *     parameters:
+ *       - in: path
+ *         name: userid
+ *         required: true
+ *         description: "User ID"
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: "A list of orders"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: "User orders not found"
+ */
 router.get(`/get/usersorders/:userid`, async (req, res) => {
   const userOrderList = await Order.find({ user: req.params.userid })
     .populate({
