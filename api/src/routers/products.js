@@ -35,7 +35,7 @@ const uploadOptions = multer({ storage: storage });
 
 /**
  * @swagger
- * /api/product:
+ * /api/v1/products:
  *   get:
  *     summary: "Get all products"
  *     description: "Retrieve a list of all products, with optional category filtering"
@@ -46,7 +46,7 @@ const uploadOptions = multer({ storage: storage });
  *         description: "Comma separated list of category IDs to filter products by"
  *         schema:
  *           type: string
- *           example: "60adf6a2e3b5a04b9c3d82d1,60adf6a2e3b5a04b9c3d82d2"
+ *           example: "60adf6a2e3b5a04b9c3d82d1"
  *     responses:
  *       200:
  *         description: "List of products"
@@ -77,7 +77,7 @@ router.get(`/`, async (req, res) => {
 
 /**
  * @swagger
- * /api/product/{id}:
+ * /api/v1/products/{id}:
  *   get:
  *     summary: "Get product by ID"
  *     description: "Retrieve product details by ID"
@@ -111,7 +111,7 @@ router.get(`/:id`, async (req, res) => {
 
 /**
  * @swagger
- * /api/product:
+ * /api/v1/products:
  *   post:
  *     summary: "Create a new product"
  *     description: "Create a new product and upload an image"
@@ -187,7 +187,7 @@ router.post(`/`, uploadOptions.single("image"), async (req, res) => {
 
 /**
  * @swagger
- * /api/product/{id}:
+ * /api/v1/products/{id}:
  *   put:
  *     summary: "Update a product"
  *     description: "Update a product's details including the image"
@@ -239,7 +239,7 @@ router.post(`/`, uploadOptions.single("image"), async (req, res) => {
  *       500:
  *         description: "Failed to update product"
  */
-router.put("/:id", uploadOptions.single("image"), async (req, res) => {
+router.put(`/:id`, uploadOptions.single("image"), async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
     return res.status(400).send("Invalid Product Id");
   }
@@ -287,7 +287,7 @@ router.put("/:id", uploadOptions.single("image"), async (req, res) => {
 // Delete a product
 /**
  * @swagger
- * /api/product/{id}:
+ * /api/v1/products/{id}:
  *   delete:
  *     summary: "Delete a product"
  *     description: "Delete a product by ID"
@@ -305,7 +305,7 @@ router.put("/:id", uploadOptions.single("image"), async (req, res) => {
  *       404:
  *         description: "Product not found"
  */
-router.delete("/:id", (req, res) => {
+router.delete(`/:id`, (req, res) => {
   Product.findByIdAndRemove(req.params.id)
     .then((product) => {
       if (product) {

@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 /**
  * @swagger
- * /users:
+ * /api/v1/users:
  *   get:
  *     summary: Get all users
  *     description: Retrieve a list of all users excluding password hashes.
@@ -27,7 +27,7 @@ router.get(`/`, async (req, res) => {
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/v1/users/{id}:
  *   get:
  *     summary: Get a user by ID
  *     description: Retrieve a user by their unique ID.
@@ -54,72 +54,74 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
+// /**
+//  * @swagger
+//  * /api/v1/users:
+//  *   post:
+//  *     summary: Create a new user
+//  *     description: Register a new user with the provided details.
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               name:
+//  *                 type: string
+//  *               email:
+//  *                 type: string
+//  *               password:
+//  *                 type: string
+//  *               phone:
+//  *                 type: string
+//  *               isAdmin:
+//  *                 type: boolean
+//  *               apartment:
+//  *                 type: string
+//  *               zip:
+//  *                 type: string
+//  *               city:
+//  *                 type: string
+//  *               country:
+//  *                 type: string
+//  *     responses:
+//  *       200:
+//  *         description: User created successfully
+//  *       400:
+//  *         description: Invalid input or email already in use
+//  */
+// router.post("/", async (req, res) => {
+//   try {
+//     const existingUser = await User.findOne({ email: req.body.email });
+//     if (existingUser) {
+//       return res.status(400).send("The email is already in use!");
+//     }
+
+//     const user = new User({
+//       name: req.body.name,
+//       email: req.body.email,
+//       passwordHash: bcrypt.hashSync(req.body.password, 10),
+//       phone: req.body.phone,
+//       isAdmin: req.body.isAdmin,
+//       apartment: req.body.apartment,
+//       zip: req.body.zip,
+//       city: req.body.city,
+//       country: req.body.country,
+//     });
+
+//     await user.save();
+//     res.status(201).send(user);
+//   } catch (error) {
+//     res.status(400).send("The user cannot be created!");
+//   }
+// });
+
+
 /**
  * @swagger
- * /users:
- *   post:
- *     summary: Create a new user
- *     description: Register a new user with the provided details.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               phone:
- *                 type: string
- *               isAdmin:
- *                 type: boolean
- *               apartment:
- *                 type: string
- *               zip:
- *                 type: string
- *               city:
- *                 type: string
- *               country:
- *                 type: string
- *     responses:
- *       200:
- *         description: User created successfully
- *       400:
- *         description: Invalid input or email already in use
- */
-router.post("/", async (req, res) => {
-  try {
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) {
-      return res.status(400).send("The email is already in use!");
-    }
-
-    const user = new User({
-      name: req.body.name,
-      email: req.body.email,
-      passwordHash: bcrypt.hashSync(req.body.password, 10),
-      phone: req.body.phone,
-      isAdmin: req.body.isAdmin,
-      apartment: req.body.apartment,
-      zip: req.body.zip,
-      city: req.body.city,
-      country: req.body.country,
-    });
-
-    await user.save();
-    res.status(201).send(user);
-  } catch (error) {
-    res.status(400).send("The user cannot be created!");
-  }
-});
-
-/**
- * @swagger
- * /users/register:
+ * /api/v1/users/register:
  *   post:
  *     summary: Register a new user
  *     description: Registers a new user in the system.
@@ -149,7 +151,7 @@ router.post("/", async (req, res) => {
  *               country:
  *                 type: string
  *     responses:
- *       200:
+ *       201:
  *         description: User registered successfully
  *       400:
  *         description: Invalid input or email already in use
@@ -182,7 +184,7 @@ router.post("/register", async (req, res) => {
 
 /**
  * @swagger
- * /users/login:
+ * /api/v1/users/login:
  *   post:
  *     summary: Login user
  *     description: Authenticates a user and generates a JWT token.
@@ -233,7 +235,7 @@ router.post("/login", async (req, res) => {
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/v1/users/{id}:
  *   delete:
  *     summary: Delete user by ID
  *     description: Deletes a user by their unique ID.
@@ -257,27 +259,6 @@ router.delete("/:id", async (req, res) => {
     res.status(200).json({ success: true, message: "User deleted successfully" });
   } catch (error) {
     res.status(400).json({ success: false, error });
-  }
-});
-
-/**
- * @swagger
- * /users/get/count:
- *   get:
- *     summary: Get user count
- *     description: Retrieves the total number of users in the database.
- *     responses:
- *       200:
- *         description: The total number of users
- *       500:
- *         description: Server error
- */
-router.get("/get/count", async (req, res) => {
-  try {
-    const usersCount = await User.countDocuments({});
-    res.status(200).send({ usersCount });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 

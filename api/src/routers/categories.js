@@ -124,13 +124,16 @@ router.get("/:id", async (req, res) => {
  *         description: "Failed to update category"
  */
 router.put("/:id", async (req, res) => {
-  const category = await Category.findByIdAndUpdate(req.params.id, {
-    name: req.body.name,
-    icon: req.body.icon,
-    color: req.body.color,
-  },
-  { new: true });
-  
+  const category = await Category.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      icon: req.body.icon,
+      color: req.body.color,
+    },
+    { new: true }
+  );
+
   if (!category) return res.status(400).send("The category cannot be updated!");
 
   res.send(category);
