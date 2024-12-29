@@ -2,6 +2,15 @@
 
 Esta es una API RESTful para gestionar una plataforma de E-commerce, desarrollada con Node.js. La API permite gestionar **categorías**, **productos**, **pedidos**, y **usuarios**. También incluye funcionalidades para la autenticación de usuarios con medidas de seguridad como el hash de contraseñas y autenticación JWT.
 
+## Imagenes del funcionamiento
+
+### Registro e Inicio de Sesión
+
+<p align="center">
+  <img src="./images/api_doc.png" alt="Documentacion de la api" width="40%">
+  <img src="./images/user_db.png" alt="Usuarios registrados en al db" width="40%">
+</p>
+
 ## Características
 
 - **Gestión de Usuarios**:
