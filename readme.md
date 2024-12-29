@@ -121,7 +121,6 @@ Para acceder a la documentación desde un navegador puede ingresar a la url: `ht
 ### Usuarios
 
 - **GET** `/api/v1/users`: Obtener todos los usuarios.
-- **POST** `/api/v1/users`: Crear un nuevo usuario.
 - **GET** `/api/v1/users/{id}`: Obtener un usuario por ID.
 - **DELETE** `/api/v1/users/{id}`: Eliminar un usuario.
 - **POST** `/api/v1/users/register`: Registrar un nuevo usuario.
